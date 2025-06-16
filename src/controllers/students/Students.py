@@ -1,6 +1,7 @@
 from flask import jsonify
-from models import Students, db
+from models import Students
 from utils import token_required
+from src.constants.database import db
 
 @token_required
 def post_student_controller(data):

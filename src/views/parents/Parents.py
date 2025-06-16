@@ -1,5 +1,5 @@
 from flask import Blueprint, request
-from constants.routes import PARENT_ROUTE
+from src.constants.routes import PARENT_ROUTE
 from controllers import ParentsController  
 
 routes = Blueprint('routes', __name__)

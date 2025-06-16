@@ -1,6 +1,4 @@
-from flask_sqlalchemy import SQLAlchemy
-
-db = SQLAlchemy()
+from src.constants.database import db
 
 class Parents(db.Model):
     id = db.Column(db.Integer, primary_key=True)
