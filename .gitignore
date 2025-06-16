@@ -1,0 +1,38 @@
+# .gitignore
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.db
+*.sqlite3
+*.log
+
+# Sanal ortamlar
+env/
+venv/
+ENV/
+.venv/
+.env
+
+# VSCode ayarları
+.vscode/
+
+# PyCharm ayarları
+.idea/
+
+# MacOS
+.DS_Store
+
+# Test çıktıları
+htmlcov/
+.coverage
+.tox/
+nosetests.xml
+coverage.xml
+
+# dotenv dosyaları
+.env
+.env.*
+
+# migrations (Flask-Migrate)
+migrations/
