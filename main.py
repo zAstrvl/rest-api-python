@@ -1,7 +1,7 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-from .src.views.auth.Auth import auth_routes
-from models import db
+from src.views.auth.Auth import auth_routes
+from src.constants.database import db
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'

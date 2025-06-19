@@ -1,6 +1,7 @@
 from flask import jsonify
-from models import Students, db
+from models import Students
 from utils import token_required
+from src.constants.database import db
 
 @token_required
 def post_student_controller(data):
@@ -30,7 +31,6 @@ def get_students_controller():
             'id': student.id,
             'name': student.name,
             'surName': student.surName,
-            'email': student.email
         })
     return jsonify({"success": True, "status code": 200, "message": "Student list request successful", "data": {"students": student_list}}), 200
 

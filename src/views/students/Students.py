@@ -1,6 +1,6 @@
 from flask import Blueprint, request
 from controllers import StudentsController 
-from constants.routes import STUDENT_ROUTE
+from src.constants.routes import STUDENT_ROUTE
 
 routes = Blueprint('routes', __name__)
 
