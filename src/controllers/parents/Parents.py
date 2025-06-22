@@ -1,5 +1,5 @@
 from flask import jsonify
-from models import Parents
+from src.models.parents.Parents import Parents
 from utils import token_required
 from src.constants.database import db
 

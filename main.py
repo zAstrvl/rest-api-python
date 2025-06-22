@@ -1,6 +1,9 @@
 from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
 from src.views.auth.Auth import auth_routes
+from src.views.students.Students import student_routes
+from src.views.parents.Parents import parent_routes
+from src.views.teachers.Teachers import teacher_routes
+from src.views.tests.Tests import tests_routes
 from src.constants.database import db
 
 app = Flask(__name__)
@@ -14,6 +17,10 @@ with app.app_context():
 
 # Blueprint'leri ekleyin
 app.register_blueprint(auth_routes)
+app.register_blueprint(student_routes)
+app.register_blueprint(parent_routes)
+app.register_blueprint(teacher_routes)
+app.register_blueprint(tests_routes)
 
 if __name__ == '__main__':
     app.run(debug=True)

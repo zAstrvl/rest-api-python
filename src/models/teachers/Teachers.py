@@ -8,8 +8,8 @@ class Teachers(db.Model):
     occupation = db.Column(db.String(120), nullable=False)
     started = db.Column(db.Date, nullable=False)
     graduated = db.Column(db.String(120), nullable=False)
-    talent = db.Column(db.String(120), nullable=False)
-    rate = db.Column(db.Float, nullable=False)
+    talent = db.Column(db.String(120))
+    rate = db.Column(db.Float)
 
     def __repr__(self):
         return f"<Teacher {self.email}>"
