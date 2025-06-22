@@ -147,3 +147,20 @@ def put_test_controller(test_id, data):
 
     return jsonify({"success": True, "status code": 200, "message": "Test updated successfully"}), 200
 
+@token_required
+def post_question_controller(data):
+    title = data.get('title')
+    questions = data.get('questions')
+
+    if not title or not questions:
+        return jsonify({"success": False, "status code": 400, "message": "No title or questions"}), 400
+    
+    existing_question = questions.query.filter_by(title=title).first()
+    if existing_question:
+        return jsonify({"success": False, "status code": 409, "message": "question already exists"}), 409
+    
+    new_question = questions(title=title, questions=questions)
+    db.session.add(new_question)
+    db.session.commit()
+
+    return jsonify({"success": True, "status code": 201, "message": "question added successfully"}), 201
