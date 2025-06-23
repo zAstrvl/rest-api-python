@@ -1,10 +1,11 @@
-from flask import jsonify
+from flask import jsonify, request
 from src.models.parents.Parents import Parents
 from utils import token_required
 from src.constants.database import db
 
 @token_required
-def post_parent_controller(data):
+def post_parent_controller():
+    data = request.get_json()
     name = data.get('name')
     surName = data.get('surName')
     email = data.get('email')
@@ -60,7 +61,8 @@ def delete_parent_controller(parent_id):
     return jsonify({"success": True, "status code": 200, "message": "Parent deleted successfully"}), 200
 
 @token_required
-def put_parent_controller(parent_id, data):
+def put_parent_controller(parent_id):
+    data = request.get_json()
     name = data.get('name')
     surName = data.get('surName')
     email = data.get('email')
