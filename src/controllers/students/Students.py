@@ -42,11 +42,16 @@ def get_student_controller(student_id):
     if not student:
         return jsonify({"success": False, "status code": 404, "message": "Student not found"}), 404
     return jsonify({
-        'id': student.id,
-        'name': student.name,
-        'surName': student.surName,
-        'email': student.email
-    }), 200
+        "success": True,
+        "status code": 200,
+        "message": "Student found",
+        "data": {
+            'id': student.id,
+            'name': student.name,
+            'surName': student.surName,
+            'email': student.email
+            }
+        }), 200
 
 @token_required
 def delete_student_controller(student_id):

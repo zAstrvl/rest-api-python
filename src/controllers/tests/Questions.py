@@ -32,7 +32,7 @@ def get_questions_controller():
             'title': question.title,
             'description': question.description
         })
-    return jsonify({"success": True, "status code": 200, "message": "Question list request successful", "data": {"students": question_list}}), 200
+    return jsonify({"success": True, "status code": 200, "message": "Question list request successful", "data": {"questions": question_list}}), 200
 
 @token_required
 def get_question_controller(question_id):
@@ -40,9 +40,14 @@ def get_question_controller(question_id):
     if not question:
         return jsonify({"success": False, "status code": 404, "message": "Question not found"}), 404
     return jsonify({
-        'id': question.id,
-        'title': question.title,
-        'description': question.description
+        "success": True,
+        "status code": 200,
+        "message": "Question found",
+        "data": {
+            'id': question.id,
+            'title': question.title,
+            'description': question.description
+        }
     }), 200
 
 @token_required
@@ -67,7 +72,7 @@ def put_question_controller(question_id):
         return jsonify({"success": False, "status code": 404, "message": "Question not found"}), 404
 
     if not title or not description:
-        return jsonify({"success": False, "status code": 400, "message": "All fields are required"}), 400
+        return jsonify({"success": False, "status code": 400, "message": "Title and description required"}), 400
 
     question.title = title
     question.description = description

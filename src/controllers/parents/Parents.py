@@ -33,9 +33,10 @@ def get_parents_controller():
             'id': parent.id,
             'name': parent.name,
             'surName': parent.surName,
-            'email': parent.email
+            'email': parent.email,
+            'phone': parent.phone
         })
-    return jsonify({"success": True, "status code": 200, "message": "Parent list request successful", "data": {"students": parent_list}}), 200
+    return jsonify({"success": True, "status code": 200, "message": "Parent list request successful", "data": {"parents": parent_list}}), 200
 
 @token_required
 def get_parent_controller(parent_id):
@@ -43,10 +44,16 @@ def get_parent_controller(parent_id):
     if not parent:
         return jsonify({"success": False, "status code": 404, "message": "Parent not found"}), 404
     return jsonify({
-        'id': parent.id,
-        'name': parent.name,
-        'surName': parent.surName,
-        'email': parent.email
+        "success": True,
+        "status code": 200,
+        "message": "Parent found",
+        "data": {
+            'id': parent.id,
+            'name': parent.name,
+            'surName': parent.surName,
+            'email': parent.email,
+            'phone': parent.phone
+            }
     }), 200
 
 @token_required
