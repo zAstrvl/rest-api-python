@@ -7,7 +7,7 @@ class Teachers(db.Model):
     email = db.Column(db.String(120), unique=True, nullable=False)
     occupation = db.Column(db.String(120), nullable=False)
     started = db.Column(db.Date, nullable=False)
-    graduated = db.Column(db.String(120), nullable=False)
+    graduated = db.Column(db.Date, nullable=False)
     talent = db.Column(db.String(120))
     rate = db.Column(db.Float)
 
