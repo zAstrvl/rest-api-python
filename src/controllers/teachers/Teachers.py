@@ -14,8 +14,8 @@ def post_teacher_controller():
     started_str = data.get('started')
     graduated_str = data.get('graduated')
 
-    started = datetime.strptime(started_str)
-    graduated = datetime.strptime(graduated_str)
+    started = datetime.strptime(started_str, "%d/%m/%Y").date() if started_str else None
+    graduated = datetime.strptime(graduated_str, "%d/%m/%Y").date() if graduated_str else None
 
     if not name or not surName or not email or not occupation or not started or not graduated:
         return jsonify({"success": False, "status code": 400, "message": "All fields are required"}), 400
@@ -41,8 +41,10 @@ def get_teachers_controller():
             'surName': teacher.surName,
             'email': teacher.email,
             'occupation': teacher.occupation,
+            'started': teacher.started,
+            'graduated': teacher.graduated
         })
-    return jsonify({"success": True, "status code": 200, "message": "Teacher list request successful", "data": {"students": teacher_list}}), 200
+    return jsonify({"success": True, "status code": 200, "message": "Teacher list request successful", "data": {"teachers": teacher_list}}), 200
 
 @token_required
 def get_teacher_controller(teacher_id):
@@ -50,10 +52,18 @@ def get_teacher_controller(teacher_id):
     if not teacher:
         return jsonify({"success": False, "status code": 404, "message": "Teacher not found"}), 404
     return jsonify({
-        'id': teacher.id,
-        'name': teacher.name,
-        'surName': teacher.surName,
-        'email': teacher.email
+        "success": True,
+        "status code": 200,
+        "message": "Teacher found",
+        "data": {
+            'id': teacher.id,
+            'name': teacher.name,
+            'surName': teacher.surName,
+            'email': teacher.email,
+            'occupation': teacher.occupation,
+            'started': teacher.started,
+            'graduated': teacher.graduated
+        }
     }), 200
 
 @token_required
@@ -74,8 +84,11 @@ def put_teacher_controller(teacher_id):
     surName = data.get('surName')
     email = data.get('email')
     occupation = data.get('occupation')
-    started = data.get('started')
-    graduated = data.get('graduated')
+    started_str = data.get('started')
+    graduated_str = data.get('graduated')
+
+    started = datetime.strptime(started_str, "%d/%m/%Y").date() if started_str else None
+    graduated = datetime.strptime(graduated_str, "%d/%m/%Y").date() if graduated_str else None
 
     teacher = Teachers.query.get(teacher_id)
     if not teacher:

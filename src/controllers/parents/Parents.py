@@ -1,10 +1,11 @@
-from flask import jsonify
+from flask import jsonify, request
 from src.models.parents.Parents import Parents
 from utils import token_required
 from src.constants.database import db
 
 @token_required
-def post_parent_controller(data):
+def post_parent_controller():
+    data = request.get_json()
     name = data.get('name')
     surName = data.get('surName')
     email = data.get('email')
@@ -32,9 +33,10 @@ def get_parents_controller():
             'id': parent.id,
             'name': parent.name,
             'surName': parent.surName,
-            'email': parent.email
+            'email': parent.email,
+            'phone': parent.phone
         })
-    return jsonify({"success": True, "status code": 200, "message": "Parent list request successful", "data": {"students": parent_list}}), 200
+    return jsonify({"success": True, "status code": 200, "message": "Parent list request successful", "data": {"parents": parent_list}}), 200
 
 @token_required
 def get_parent_controller(parent_id):
@@ -42,10 +44,16 @@ def get_parent_controller(parent_id):
     if not parent:
         return jsonify({"success": False, "status code": 404, "message": "Parent not found"}), 404
     return jsonify({
-        'id': parent.id,
-        'name': parent.name,
-        'surName': parent.surName,
-        'email': parent.email
+        "success": True,
+        "status code": 200,
+        "message": "Parent found",
+        "data": {
+            'id': parent.id,
+            'name': parent.name,
+            'surName': parent.surName,
+            'email': parent.email,
+            'phone': parent.phone
+            }
     }), 200
 
 @token_required
@@ -60,7 +68,8 @@ def delete_parent_controller(parent_id):
     return jsonify({"success": True, "status code": 200, "message": "Parent deleted successfully"}), 200
 
 @token_required
-def put_parent_controller(parent_id, data):
+def put_parent_controller(parent_id):
+    data = request.get_json()
     name = data.get('name')
     surName = data.get('surName')
     email = data.get('email')
