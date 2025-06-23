@@ -1,10 +1,11 @@
-from flask import jsonify
-from models import Students
+from flask import jsonify, request
+from src.models.students.Students import Students
 from utils import token_required
 from src.constants.database import db
 
 @token_required
-def post_student_controller(data):
+def post_student_controller():
+    data = request.get_json()
     name = data.get('name')
     surName = data.get('surName')
     email = data.get('email')
@@ -31,6 +32,7 @@ def get_students_controller():
             'id': student.id,
             'name': student.name,
             'surName': student.surName,
+            'email': student.email
         })
     return jsonify({"success": True, "status code": 200, "message": "Student list request successful", "data": {"students": student_list}}), 200
 
@@ -58,7 +60,8 @@ def delete_student_controller(student_id):
     return jsonify({"success": True, "status code": 200, "message": "Student deleted successfully"}), 200
 
 @token_required
-def put_student_controller(student_id, data):
+def put_student_controller(student_id):
+    data = request.get_json()
     name = data.get('name')
     surName = data.get('surName')
     email = data.get('email')

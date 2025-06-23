@@ -1,16 +1,21 @@
-from flask import jsonify
-from models import Teachers
+from flask import jsonify, request
+from src.models.teachers.Teachers import Teachers
 from utils import token_required
 from src.constants.database import db
+from datetime import datetime
 
 @token_required
-def post_teacher_controller(data):
+def post_teacher_controller():
+    data = request.get_json()
     name = data.get('name')
     surName = data.get('surName')
     email = data.get('email')
     occupation = data.get('occupation')
-    started = data.get('started')
-    graduated = data.get('graduated')
+    started_str = data.get('started')
+    graduated_str = data.get('graduated')
+
+    started = datetime.strptime(started_str)
+    graduated = datetime.strptime(graduated_str)
 
     if not name or not surName or not email or not occupation or not started or not graduated:
         return jsonify({"success": False, "status code": 400, "message": "All fields are required"}), 400
@@ -34,7 +39,8 @@ def get_teachers_controller():
             'id': teacher.id,
             'name': teacher.name,
             'surName': teacher.surName,
-            'email': teacher.email
+            'email': teacher.email,
+            'occupation': teacher.occupation,
         })
     return jsonify({"success": True, "status code": 200, "message": "Teacher list request successful", "data": {"students": teacher_list}}), 200
 
@@ -62,7 +68,8 @@ def delete_teacher_controller(teacher_id):
     return jsonify({"success": True, "status code": 200, "message": "Teacher deleted successfully"}), 200
 
 @token_required
-def put_teacher_controller(teacher_id, data):
+def put_teacher_controller(teacher_id):
+    data = request.get_json()
     name = data.get('name')
     surName = data.get('surName')
     email = data.get('email')
