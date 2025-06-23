@@ -44,7 +44,7 @@ def get_teachers_controller():
             'started': teacher.started,
             'graduated': teacher.graduated
         })
-    return jsonify({"success": True, "status code": 200, "message": "Teacher list request successful", "data": {"students": teacher_list}}), 200
+    return jsonify({"success": True, "status code": 200, "message": "Teacher list request successful", "data": {"teachers": teacher_list}}), 200
 
 @token_required
 def get_teacher_controller(teacher_id):
@@ -52,13 +52,18 @@ def get_teacher_controller(teacher_id):
     if not teacher:
         return jsonify({"success": False, "status code": 404, "message": "Teacher not found"}), 404
     return jsonify({
-        'id': teacher.id,
-        'name': teacher.name,
-        'surName': teacher.surName,
-        'email': teacher.email,
-        'occupation': teacher.occupation,
-        'started': teacher.started,
-        'graduated': teacher.graduated
+        "success": True,
+        "status code": 200,
+        "message": "Teacher found",
+        "data": {
+            'id': teacher.id,
+            'name': teacher.name,
+            'surName': teacher.surName,
+            'email': teacher.email,
+            'occupation': teacher.occupation,
+            'started': teacher.started,
+            'graduated': teacher.graduated
+        }
     }), 200
 
 @token_required

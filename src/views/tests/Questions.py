@@ -1,4 +1,4 @@
-from flask import Blueprint, request
+from flask import Blueprint
 from src.constants.routes import QUESTION_ROUTE
 from controllers import QuestionsController  
 
