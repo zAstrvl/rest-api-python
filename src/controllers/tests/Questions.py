@@ -117,3 +117,26 @@ def put_question_controller(question_id):
     db.session.commit()
 
     return jsonify({"success": True, "status code": 200, "message": "Question updated successfully"}), 200
+
+@token_required
+def check_answer_controller(question_id):
+    data = request.get_json()
+    answer_id = data.get('answer_id')
+
+    question = Questions.query.get(question_id)
+
+    if not question:
+        return jsonify({"success": False, "status code": 404,"message": "Question not found"}), 404
+    
+    answer = Answers.query.filter_by(id=answer_id, question_id=question_id).first()
+
+    if not answer:
+        return jsonify({"success": False, "status code": 404, "message": "Answer not found for this question"}), 404
+    
+    return jsonify({
+        "success": True,
+        "question": question.title,
+        "your_answer": answer.title,
+        "isTrue": answer.isTrue,
+        "message": "Correct" if answer.isTrue else "Wrong"
+    })

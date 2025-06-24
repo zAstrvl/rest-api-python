@@ -1,5 +1,5 @@
 from flask import Blueprint
-from src.constants.routes import QUESTION_ROUTE
+from src.constants.routes import QUESTION_ROUTE, CHECK_ROUTE
 from controllers import QuestionsController  
 
 question_routes = Blueprint('question_routes', __name__)
@@ -28,3 +28,7 @@ def put_question_route(question_id):
 @question_routes.route(f'/{QUESTION_ROUTE}/<int:question_id>', methods=['DELETE'])
 def delete_question_route(question_id):
     return QuestionsController.delete_question_controller(question_id)
+
+@question_routes.route(f'/{QUESTION_ROUTE}/<int:question_id>/{CHECK_ROUTE}', methods=['POST'])
+def check_answer(question_id):
+    return QuestionsController.check_answer_controller(question_id)
