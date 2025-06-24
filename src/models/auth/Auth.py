@@ -1,4 +1,5 @@
 from src.constants.database import db
+from src.constants.usertypes import UserTypes
 
 class Auth(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -8,6 +9,7 @@ class Auth(db.Model):
     name = db.Column(db.String(120), nullable=False)
     surName = db.Column(db.String(120), nullable=False)
     isChecked = db.Column(db.Boolean, default=False)
+    userType = db.Column(db.Enum(UserTypes), nullable=False)
 
     def __repr__(self):
         return f"<Auth {self.email}>"
