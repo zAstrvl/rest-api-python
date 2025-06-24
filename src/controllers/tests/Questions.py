@@ -13,6 +13,9 @@ def post_question_controller():
     if not title or not answers:
         return jsonify({"success": False, "status code": 400, "message": "No title or answers"}), 400
     
+    existing_question = Questions.query.filter_by(title=title).first()
+    if existing_question:
+        return jsonify({"success": False, "status code": 409, "message": "Question already exists"}), 409
     question = Questions(title=title, description=description)
     db.session.add(question)
     db.session.commit()
