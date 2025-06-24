@@ -3,6 +3,5 @@ from src.views.students import Students as StudentsView
 from src.views.parents import Parents as ParentsView
 from src.views.teachers import Teachers as TeachersView
 from src.views.tests import Questions as QuestionsView
-from src.views.tests import Answers as AnswersView
 
-__all__ = ["AuthView", "StudentsView", "ParentsView", "TeachersView", "QuestionsView", "AnswersView"]
+__all__ = ["AuthView", "StudentsView", "ParentsView", "TeachersView", "QuestionsView"]
