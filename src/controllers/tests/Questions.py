@@ -1,9 +1,9 @@
 from flask import jsonify, request
 from models import Questions, Answers
-from utils import token_required
+from utils import role_required
 from src.constants.database import db
 
-@token_required
+@role_required('TEACHER', 'ADMIN')
 def post_question_controller():
     data = request.get_json()
     title = data.get('title')
@@ -31,7 +31,7 @@ def post_question_controller():
 
     return jsonify({"success": True, "status code": 201, "message": "Question and answers added successfully"}), 201
 
-@token_required
+@role_required('TEACHER', 'ADMIN')
 def get_questions_controller():
     questions = Questions.query.all()
     question_list = []
@@ -51,7 +51,7 @@ def get_questions_controller():
         })
     return jsonify({"success": True, "status code": 200, "message": "Question list request successful", "data": {"questions": question_list}}), 200
 
-@token_required
+@role_required('TEACHER', 'ADMIN')
 def get_question_controller(question_id):
     question = Questions.query.get(question_id)
     if not question:
@@ -74,7 +74,7 @@ def get_question_controller(question_id):
         }
     }), 200
 
-@token_required
+@role_required('TEACHER', 'ADMIN')
 def delete_question_controller(question_id):
     question = Questions.query.get(question_id)
     if not question:
@@ -85,7 +85,7 @@ def delete_question_controller(question_id):
     
     return jsonify({"success": True, "status code": 200, "message": "Question deleted successfully"}), 200
 
-@token_required
+@role_required('TEACHER', 'ADMIN')
 def put_question_controller(question_id):
     data = request.get_json()
     title = data.get('title')
@@ -118,7 +118,7 @@ def put_question_controller(question_id):
 
     return jsonify({"success": True, "status code": 200, "message": "Question updated successfully"}), 200
 
-@token_required
+@role_required('TEACHER', 'ADMIN')
 def check_answer_controller(question_id):
     data = request.get_json()
     answer_id = data.get('answer_id')
@@ -135,8 +135,58 @@ def check_answer_controller(question_id):
     
     return jsonify({
         "success": True,
-        "question": question.title,
         "your_answer": answer.title,
         "isTrue": answer.isTrue,
         "message": "Correct" if answer.isTrue else "Wrong"
     })
+
+@role_required('TEACHER', 'ADMIN')
+def check_test_controller():
+    data = request.get_json()
+    answers = data.get('answers', [])
+    grade = "F"
+
+    if not answers:
+        return jsonify({"success": False, "message": "No answers provided"}), 400
+
+    total = len(answers)
+    correct = 0
+    details = []
+
+    for item in answers:
+        question_id = item.get('question_id')
+        answer_id = item.get('answer_id')
+        question = Questions.query.get(question_id)
+        answer = Answers.query.filter_by(id=answer_id, question_id=question_id).first()
+        isTrue = answer.isTrue if answer else False
+        if isTrue:
+            correct += 1
+        details.append({
+            "question_id": question_id,
+            "question": question.title if question else None,
+            "your_answer": answer.title if answer else None,
+            "isTrue": isTrue
+        })
+
+    average = (correct / total) * 5 if total > 0 else 0
+
+    if average == 5:
+        grade = "A"
+    elif average < 5 and average >= 4:
+        grade = "B"
+    elif average < 4 and average >= 3:
+        grade = "C"
+    elif average < 3 and average >= 2:
+        grade = "D"
+    elif average < 2 and average >= 1:
+        grade = "E"
+    
+
+    return jsonify({
+        "success": True,
+        "total": total,
+        "correct": correct,
+        "average": average,
+        "details": details,
+        "grade": grade
+    }), 200
