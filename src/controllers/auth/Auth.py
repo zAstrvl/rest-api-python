@@ -6,9 +6,9 @@ from src.constants.database import db
 from src.constants.usertypes import UserTypes
 
 def login(email, password):
-    admin = Auth.query.filter_by(email=email).first()
-    if admin and check_password_hash(admin.password, password):
-        return generate_token(admin.id, admin.userType.name)
+    user = Auth.query.filter_by(email=email).first()
+    if user and check_password_hash(user.password, password):
+        return generate_token(user.id, user.userType.name)
     return None
 
 def post_login(data):

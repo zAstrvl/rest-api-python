@@ -34,7 +34,8 @@ def get_students_controller():
             'id': student.id,
             'name': student.name,
             'surName': student.surName,
-            'email': student.email
+            'email': student.email,
+            'userType': student.userType.name
         })
     return jsonify({"success": True, "status code": 200, "message": "Student list request successful", "data": {"students": student_list}}), 200
 
@@ -51,7 +52,8 @@ def get_student_controller(student_id):
             'id': student.id,
             'name': student.name,
             'surName': student.surName,
-            'email': student.email
+            'email': student.email,
+            'userType': student.userType.name
             }
         }), 200
 

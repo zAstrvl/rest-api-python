@@ -54,7 +54,8 @@ def get_parent_controller(parent_id):
             'name': parent.name,
             'surName': parent.surName,
             'email': parent.email,
-            'phone': parent.phone
+            'phone': parent.phone,
+            'userType': parent.userType.name
             }
     }), 200
 

@@ -136,7 +136,6 @@ def check_answer_controller(question_id):
     
     return jsonify({
         "success": True,
-        "question": question.title,
         "your_answer": answer.title,
         "isTrue": answer.isTrue,
         "message": "Correct" if answer.isTrue else "Wrong"
