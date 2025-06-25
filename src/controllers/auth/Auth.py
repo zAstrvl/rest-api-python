@@ -3,11 +3,12 @@ from src.models.auth.Auth import Auth
 from werkzeug.security import check_password_hash, generate_password_hash
 from utils import generate_token
 from src.constants.database import db
+from src.constants.usertypes import UserTypes
 
 def login(email, password):
     admin = Auth.query.filter_by(email=email).first()
     if admin and check_password_hash(admin.password, password):
-        return generate_token(admin.id)
+        return generate_token(admin.id, admin.userType.name)
     return None
 
 def post_login(data):
@@ -31,8 +32,9 @@ def post_register(data):
     name = data.get('name')
     surName = data.get('surName')
     isChecked = data.get('isChecked')
+    userType = data.get('userType')
 
-    existing_admin = Auth.query.filter_by(email=email).first()
+    existing_email = Auth.query.filter_by(email=email).first()
     
     if not email or not password or not confirmPassword or not name or not surName:
         return jsonify({"success": False, "status code": 400, "message": "All fields are required"}), 400
@@ -41,11 +43,11 @@ def post_register(data):
         return jsonify({"success": False, "status code": 400, "message": "Passwords do not match"}), 400
     if isChecked is False:
         return jsonify({"success": False, "status code": 400, "message": "You must agree to the terms"}), 400
-    if existing_admin:
+    if existing_email:
         return jsonify({"success": False, "status code": 409, "message": "Admin already exists"}), 409
     
     hashedPassword = generate_password_hash(password)
-    new_admin = Auth(email=email, password=hashedPassword, confirmPassword=hashedPassword, name=name, surName=surName, isChecked=isChecked)
+    new_admin = Auth(email=email, password=hashedPassword, confirmPassword=hashedPassword, name=name, surName=surName, isChecked=isChecked, userType=userType)
     db.session.add(new_admin)
     db.session.commit()
     return jsonify({"success": True, "status code": 201, "message": "Admin registered successfully"}), 201

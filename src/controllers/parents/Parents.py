@@ -1,15 +1,17 @@
 from flask import jsonify, request
 from src.models.parents.Parents import Parents
-from utils import token_required
+from utils import role_required
 from src.constants.database import db
+from src.constants.usertypes import UserTypes
 
-@token_required
+@role_required('ADMIN')
 def post_parent_controller():
     data = request.get_json()
     name = data.get('name')
     surName = data.get('surName')
     email = data.get('email')
     phone = data.get('phone')
+    userType = UserTypes.PARENT.name
 
     if not name or not surName or not email or not phone:
         return jsonify({"success": False, "status code": 400, "message": "All fields are required"}), 400
@@ -18,13 +20,13 @@ def post_parent_controller():
     if existing_parent:
         return jsonify({"success": False, "status code": 409, "message": "Parent already exists"}), 409
 
-    new_parent = Parents(name=name, surName=surName, email=email, phone=phone)
+    new_parent = Parents(name=name, surName=surName, email=email, phone=phone, userType=userType)
     db.session.add(new_parent)
     db.session.commit()
 
     return jsonify({"success": True, "status code": 201, "message": "Parent added successfully"}), 201
 
-@token_required
+@role_required('ADMIN')
 def get_parents_controller():
     parents = Parents.query.all()
     parent_list = []
@@ -34,11 +36,11 @@ def get_parents_controller():
             'name': parent.name,
             'surName': parent.surName,
             'email': parent.email,
-            'phone': parent.phone
+            'phone': parent.phone,
         })
     return jsonify({"success": True, "status code": 200, "message": "Parent list request successful", "data": {"parents": parent_list}}), 200
 
-@token_required
+@role_required('ADMIN')
 def get_parent_controller(parent_id):
     parent = Parents.query.get(parent_id)
     if not parent:
@@ -56,7 +58,7 @@ def get_parent_controller(parent_id):
             }
     }), 200
 
-@token_required
+@role_required('ADMIN')
 def delete_parent_controller(parent_id):
     parent = Parents.query.get(parent_id)
     if not parent:
@@ -67,7 +69,7 @@ def delete_parent_controller(parent_id):
     
     return jsonify({"success": True, "status code": 200, "message": "Parent deleted successfully"}), 200
 
-@token_required
+@role_required('ADMIN')
 def put_parent_controller(parent_id):
     data = request.get_json()
     name = data.get('name')

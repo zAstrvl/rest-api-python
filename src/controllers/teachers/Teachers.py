@@ -1,10 +1,11 @@
 from flask import jsonify, request
 from src.models.teachers.Teachers import Teachers
-from utils import token_required
+from utils import role_required
 from src.constants.database import db
+from src.constants.usertypes import UserTypes
 from datetime import datetime
 
-@token_required
+@role_required('ADMIN')
 def post_teacher_controller():
     data = request.get_json()
     name = data.get('name')
@@ -13,6 +14,7 @@ def post_teacher_controller():
     occupation = data.get('occupation')
     started_str = data.get('started')
     graduated_str = data.get('graduated')
+    userType = UserTypes.TEACHER.name
 
     started = datetime.strptime(started_str, "%d/%m/%Y").date() if started_str else None
     graduated = datetime.strptime(graduated_str, "%d/%m/%Y").date() if graduated_str else None
@@ -24,13 +26,13 @@ def post_teacher_controller():
     if existing_teacher:
         return jsonify({"success": False, "status code": 409, "message": "Teacher already exists"}), 409
 
-    new_teacher = Teachers(name=name, surName=surName, email=email, occupation=occupation, started=started, graduated=graduated)
+    new_teacher = Teachers(name=name, surName=surName, email=email, occupation=occupation, started=started, graduated=graduated, userType=userType)
     db.session.add(new_teacher)
     db.session.commit()
 
     return jsonify({"success": True, "status code": 201, "message": "Teacher added successfully"}), 201
 
-@token_required
+@role_required('ADMIN')
 def get_teachers_controller():
     teachers = Teachers.query.all()
     teacher_list = []
@@ -46,7 +48,7 @@ def get_teachers_controller():
         })
     return jsonify({"success": True, "status code": 200, "message": "Teacher list request successful", "data": {"teachers": teacher_list}}), 200
 
-@token_required
+@role_required('ADMIN')
 def get_teacher_controller(teacher_id):
     teacher = Teachers.query.get(teacher_id)
     if not teacher:
@@ -66,7 +68,7 @@ def get_teacher_controller(teacher_id):
         }
     }), 200
 
-@token_required
+@role_required('ADMIN')
 def delete_teacher_controller(teacher_id):
     teacher = Teachers.query.get(teacher_id)
     if not teacher:
@@ -77,7 +79,7 @@ def delete_teacher_controller(teacher_id):
     
     return jsonify({"success": True, "status code": 200, "message": "Teacher deleted successfully"}), 200
 
-@token_required
+@role_required('ADMIN')
 def put_teacher_controller(teacher_id):
     data = request.get_json()
     name = data.get('name')
