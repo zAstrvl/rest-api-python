@@ -14,8 +14,7 @@ def post_teacher_controller():
     occupation = data.get('occupation')
     started_str = data.get('started')
     graduated_str = data.get('graduated')
-    userType = UserTypes.TEACHER
-
+    userType = UserTypes.TEACHER.name
 
     started = datetime.strptime(started_str, "%d/%m/%Y").date() if started_str else None
     graduated = datetime.strptime(graduated_str, "%d/%m/%Y").date() if graduated_str else None

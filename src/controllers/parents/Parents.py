@@ -11,7 +11,7 @@ def post_parent_controller():
     surName = data.get('surName')
     email = data.get('email')
     phone = data.get('phone')
-    userType = UserTypes.PARENT
+    userType = UserTypes.PARENT.name
 
     if not name or not surName or not email or not phone:
         return jsonify({"success": False, "status code": 400, "message": "All fields are required"}), 400
@@ -37,7 +37,6 @@ def get_parents_controller():
             'surName': parent.surName,
             'email': parent.email,
             'phone': parent.phone,
-            'userType': parent.userType.name
         })
     return jsonify({"success": True, "status code": 200, "message": "Parent list request successful", "data": {"parents": parent_list}}), 200
 
@@ -60,7 +59,6 @@ def get_parent_controller(parent_id):
             }
     }), 200
 
-
 @role_required('ADMIN')
 def delete_parent_controller(parent_id):
     parent = Parents.query.get(parent_id)
@@ -71,7 +69,6 @@ def delete_parent_controller(parent_id):
     db.session.commit()
     
     return jsonify({"success": True, "status code": 200, "message": "Parent deleted successfully"}), 200
-
 
 @role_required('ADMIN')
 def put_parent_controller(parent_id):

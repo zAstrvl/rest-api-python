@@ -1,16 +1,16 @@
 from flask import jsonify, request
 from src.models.students.Students import Students
-from utils import role_required
 from src.constants.database import db
 from src.constants.usertypes import UserTypes
+from utils import role_required
 
-@role_required('ADMIN')
+@role_required('TEACHER', 'ADMIN')
 def post_student_controller():
     data = request.get_json()
     name = data.get('name')
     surName = data.get('surName')
     email = data.get('email')
-    userType = UserTypes.STUDENT
+    userType = UserTypes.STUDENT.name
 
     if not name or not surName or not email:
         return jsonify({"success": False, "status code": 400, "message": "All fields are required"}), 400
@@ -25,7 +25,7 @@ def post_student_controller():
 
     return jsonify({"success": True, "status code": 201, "message": "Student added successfully"}), 201
 
-@role_required('ADMIN')
+@role_required('TEACHER', 'ADMIN')
 def get_students_controller():
     students = Students.query.all()
     student_list = []
@@ -39,7 +39,7 @@ def get_students_controller():
         })
     return jsonify({"success": True, "status code": 200, "message": "Student list request successful", "data": {"students": student_list}}), 200
 
-@role_required('ADMIN')
+@role_required('TEACHER', 'ADMIN')
 def get_student_controller(student_id):
     student = Students.query.get(student_id)
     if not student:
@@ -57,7 +57,7 @@ def get_student_controller(student_id):
             }
         }), 200
 
-@role_required('ADMIN')
+@role_required('TEACHER', 'ADMIN')
 def delete_student_controller(student_id):
     student = Students.query.get(student_id)
     if not student:
@@ -68,7 +68,7 @@ def delete_student_controller(student_id):
     
     return jsonify({"success": True, "status code": 200, "message": "Student deleted successfully"}), 200
 
-@role_required('ADMIN')
+@role_required('TEACHER', 'ADMIN')
 def put_student_controller(student_id):
     data = request.get_json()
     name = data.get('name')

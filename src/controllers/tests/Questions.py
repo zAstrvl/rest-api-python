@@ -9,6 +9,7 @@ def post_question_controller():
     title = data.get('title')
     description = data.get('description')
     answers = data.get('answers')
+    type = data.get('type')
 
     if not title or not answers:
         return jsonify({"success": False, "status code": 400, "message": "No title or answers"}), 400
@@ -16,7 +17,7 @@ def post_question_controller():
     existing_question = Questions.query.filter_by(title=title).first()
     if existing_question:
         return jsonify({"success": False, "status code": 409, "message": "Question already exists"}), 409
-    question = Questions(title=title, description=description)
+    question = Questions(title=title, description=description, type=type)
     db.session.add(question)
     db.session.commit()
 
@@ -140,14 +141,14 @@ def check_answer_controller(question_id):
         "message": "Correct" if answer.isTrue else "Wrong"
     })
 
-@role_required('TEACHER', 'ADMIN')
+@role_required('TEACHER', 'ADMIN', 'STUDENT')
 def check_test_controller():
     data = request.get_json()
     answers = data.get('answers', [])
     grade = "F"
 
-    if not answers:
-        return jsonify({"success": False, "message": "No answers provided"}), 400
+    if not answers or not isinstance(answers, list):
+        return jsonify({"success": False, "status code": 400, "message": "Answers list required"}), 400
 
     total = len(answers)
     correct = 0
@@ -158,18 +159,17 @@ def check_test_controller():
         answer_id = item.get('answer_id')
         question = Questions.query.get(question_id)
         answer = Answers.query.filter_by(id=answer_id, question_id=question_id).first()
-        isTrue = answer.isTrue if answer else False
-        if isTrue:
+        is_true = answer.isTrue if answer else False
+        if is_true:
             correct += 1
         details.append({
             "question_id": question_id,
             "question": question.title if question else None,
             "your_answer": answer.title if answer else None,
-            "isTrue": isTrue
+            "isTrue": is_true
         })
 
     average = (correct / total) * 5 if total > 0 else 0
-
     if average == 5:
         grade = "A"
     elif average < 5 and average >= 4:
@@ -180,7 +180,6 @@ def check_test_controller():
         grade = "D"
     elif average < 2 and average >= 1:
         grade = "E"
-    
 
     return jsonify({
         "success": True,

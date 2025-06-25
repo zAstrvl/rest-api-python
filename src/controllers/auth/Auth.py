@@ -6,10 +6,9 @@ from src.constants.database import db
 from src.constants.usertypes import UserTypes
 
 def login(email, password):
-    admin = Auth.query.filter_by(email=email).first()
-    if admin and check_password_hash(admin.password, password):
-        admin.userType = UserTypes.ADMIN.name
-        return generate_token(admin.id, admin.userType)
+    user = Auth.query.filter_by(email=email).first()
+    if user and check_password_hash(user.password, password):
+        return generate_token(user.id, user.userType.name)
     return None
 
 def post_login(data):
@@ -33,9 +32,9 @@ def post_register(data):
     name = data.get('name')
     surName = data.get('surName')
     isChecked = data.get('isChecked')
-    userType = UserTypes.ADMIN
+    userType = data.get('userType')
 
-    existing_admin = Auth.query.filter_by(email=email).first()
+    existing_email = Auth.query.filter_by(email=email).first()
     
     if not email or not password or not confirmPassword or not name or not surName:
         return jsonify({"success": False, "status code": 400, "message": "All fields are required"}), 400
@@ -44,7 +43,7 @@ def post_register(data):
         return jsonify({"success": False, "status code": 400, "message": "Passwords do not match"}), 400
     if isChecked is False:
         return jsonify({"success": False, "status code": 400, "message": "You must agree to the terms"}), 400
-    if existing_admin:
+    if existing_email:
         return jsonify({"success": False, "status code": 409, "message": "Admin already exists"}), 409
     
     hashedPassword = generate_password_hash(password)

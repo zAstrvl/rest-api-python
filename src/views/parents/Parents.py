@@ -1,11 +1,11 @@
 from flask import Blueprint
 from src.constants.routes import PARENT_ROUTE
-from controllers import ParentsController  
+from controllers import ParentsController
 
 parent_routes = Blueprint('parent_routes', __name__)
 
 # Get parents from db
-@parent_routes.route(f'/{PARENT_ROUTE}', methods=['GET']) 
+@parent_routes.route(f'/{PARENT_ROUTE}', methods=['GET'])
 def get_parents_route():
     return ParentsController.get_parents_controller()
     

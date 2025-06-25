@@ -1,11 +1,12 @@
 from flask import Blueprint
 from src.constants.routes import TEACHER_ROUTE
-from controllers import TeachersController  
+from controllers import TeachersController
+from utils import role_required
 
 teacher_routes = Blueprint('teacher_routes', __name__)
 
 # Get parents from db
-@teacher_routes.route(f'/{TEACHER_ROUTE}', methods=['GET']) 
+@teacher_routes.route(f'/{TEACHER_ROUTE}', methods=['GET'])
 def get_teachers_route():
     return TeachersController.get_teachers_controller()
     

@@ -5,7 +5,7 @@ from src.constants.routes import STUDENT_ROUTE
 student_routes = Blueprint('student_routes', __name__)
 
 # Get students from db
-@student_routes.route(f'/{STUDENT_ROUTE}', methods=['GET']) 
+@student_routes.route(f'/{STUDENT_ROUTE}', methods=['GET'])
 def get_students_route():
     return StudentsController.get_students_controller()
     
