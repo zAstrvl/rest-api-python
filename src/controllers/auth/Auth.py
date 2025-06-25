@@ -3,7 +3,6 @@ from src.models.auth.Auth import Auth
 from werkzeug.security import check_password_hash, generate_password_hash
 from utils import generate_token
 from src.constants.database import db
-from src.constants.usertypes import UserTypes
 
 def login(email, password):
     user = Auth.query.filter_by(email=email).first()
@@ -44,11 +43,11 @@ def post_register(data):
     if isChecked is False:
         return jsonify({"success": False, "status code": 400, "message": "You must agree to the terms"}), 400
     if existing_email:
-        return jsonify({"success": False, "status code": 409, "message": "Admin already exists"}), 409
+        return jsonify({"success": False, "status code": 409, "message": "User already exists"}), 409
     
     hashedPassword = generate_password_hash(password)
     new_admin = Auth(email=email, password=hashedPassword, confirmPassword=hashedPassword, name=name, surName=surName, isChecked=isChecked, userType=userType)
     db.session.add(new_admin)
     db.session.commit()
-    return jsonify({"success": True, "status code": 201, "message": "Admin registered successfully"}), 201
+    return jsonify({"success": True, "status code": 201, "message": "User registered successfully"}), 201
     

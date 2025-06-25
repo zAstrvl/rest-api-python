@@ -8,6 +8,6 @@ class Questions(db.Model):
     answers = db.relationship('Answers', backref='question', lazy=True, cascade="all, delete-orphan")
     type = db.Column(db.Enum(UserTypes), nullable=False)
     average = db.Column(db.Float)
-
+    
     def __repr__(self):
         return f"<Question {self.id}>"

@@ -4,6 +4,7 @@ from src.views.students.Students import student_routes
 from src.views.parents.Parents import parent_routes
 from src.views.teachers.Teachers import teacher_routes
 from src.views.tests.Questions import question_routes
+from src.views.classes.Classes import class_routes
 from src.constants.database import db
 
 app = Flask(__name__)
@@ -20,6 +21,7 @@ app.register_blueprint(student_routes)
 app.register_blueprint(parent_routes)
 app.register_blueprint(teacher_routes)
 app.register_blueprint(question_routes)
+app.register_blueprint(class_routes)
 
 if __name__ == '__main__':
     app.run(debug=True)
