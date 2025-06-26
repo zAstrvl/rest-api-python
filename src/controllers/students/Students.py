@@ -11,15 +11,17 @@ def post_student_controller():
     surName = data.get('surName')
     email = data.get('email')
     userType = UserTypes.STUDENT.name
+    itsClass = data.get('itsClass')
+    parentID = data.get('parentID')
 
-    if not name or not surName or not email:
+    if not name or not surName or not email or not itsClass or not parentID:
         return jsonify({"success": False, "status code": 400, "message": "All fields are required"}), 400
 
     existing_student = Students.query.filter_by(email=email).first()
     if existing_student:
         return jsonify({"success": False, "status code": 409, "message": "Student already exists"}), 409
 
-    new_student = Students(name=name, surName=surName, email=email, userType=userType)
+    new_student = Students(name=name, surName=surName, email=email, userType=userType, itsClass=itsClass, parentID=parentID)
     db.session.add(new_student)
     db.session.commit()
 
@@ -35,7 +37,9 @@ def get_students_controller():
             'name': student.name,
             'surName': student.surName,
             'email': student.email,
-            'userType': student.userType.name
+            'userType': student.userType.name,
+            'itsClass': student.itsClass,
+            'parentID': student.parentID
         })
     return jsonify({"success": True, "status code": 200, "message": "Student list request successful", "data": {"students": student_list}}), 200
 
@@ -53,7 +57,9 @@ def get_student_controller(student_id):
             'name': student.name,
             'surName': student.surName,
             'email': student.email,
-            'userType': student.userType.name
+            'userType': student.userType.name,
+            'itsClass': student.itsClass,
+            'parentID': student.parentID
             }
         }), 200
 
@@ -74,6 +80,8 @@ def put_student_controller(student_id):
     name = data.get('name')
     surName = data.get('surName')
     email = data.get('email')
+    itsClass = data.get('itsClass')
+    parentID = data.get('parentID')
 
     student = Students.query.get(student_id)
     if not student:
@@ -85,6 +93,8 @@ def put_student_controller(student_id):
     student.name = name
     student.surName = surName
     student.email = email
+    student.itsClass = itsClass
+    student.parentID = parentID
     db.session.commit()
 
     return jsonify({"success": True, "status code": 200, "message": "Student updated successfully"}), 200

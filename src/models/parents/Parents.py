@@ -11,6 +11,7 @@ class Parents(db.Model):
     rate = db.Column(db.Float)
     userType = db.Column(db.Enum(UserTypes), nullable=False)
     average = db.Column(db.Float)
+    itsChildren = db.relationship('Students', backref='parent', lazy=True, cascade="all, delete-orphan" )
     
     def __repr__(self):
         return f"<Parent {self.email}>"

@@ -1,23 +1,31 @@
 from flask import jsonify, request
 from src.models.classes.Classes import Classes
 from src.models.students.Students import Students
+from src.models.teachers.Teachers import Teachers
 from utils import role_required
 from src.constants.database import db
-
-from flask import jsonify, request
-from src.models.classes.Classes import Classes
-from src.models.students.Students import Students
-from src.constants.database import db
-from utils import role_required
 
 @role_required('TEACHER', 'ADMIN')
 def get_classes_controller():
     classes = Classes.query.all()
     class_list = []
     for c in classes:
+        teacher = Teachers.query.get(c.itsTeacher)
+        teacher_list = [
+            {
+                "id": teacher.id,
+                "name": teacher.name,
+                "surName": teacher.surName,
+                "email": teacher.email,
+                "occupation": teacher.occupation,
+                "started": teacher.started,
+                "graduated": teacher.graduated
+            } if teacher else None
+        ]
         class_list.append({
             "id": c.id,
             "averageValue": c.averageValue,
+            "itsTeacher": teacher_list,
             "students": [
                 {
                     "id": s.id,
@@ -34,11 +42,24 @@ def get_class_controller(class_id):
     c = Classes.query.get(class_id)
     if not c:
         return jsonify({"success": False, "message": "Class not found"}), 404
+    teacher = Teachers.query.get(c.itsTeacher)
+    teacher_list = [
+            {
+                "id": teacher.id,
+                "name": teacher.name,
+                "surName": teacher.surName,
+                "email": teacher.email,
+                "occupation": teacher.occupation,
+                "started": teacher.started,
+                "graduated": teacher.graduated
+            } if teacher else None
+        ]
     return jsonify({
         "success": True,
         "class": {
             "id": c.id,
             "averageValue": c.averageValue,
+            "itsTeacher": teacher_list,
             "students": [
                 {
                     "id": s.id,
@@ -81,3 +102,24 @@ def put_class_controller(class_id):
     c.itsTeacher = data.get('itsTeacher', c.itsTeacher)
     db.session.commit()
     return jsonify({"success": True, "message": "Class updated"}), 200
+
+@role_required('TEACHER', 'ADMIN')
+def get_class_average_controller(class_id):
+    class_obj = Classes.query.get(class_id)
+    if not class_obj:
+        return jsonify({"success": False, "message": "Class not found"}), 404
+
+    students = Students.query.filter_by(itsClass=class_id).all()
+    if not students:
+        return jsonify({"success": False, "message": "No students in this class"}), 404
+    
+    total = sum([s.average for s in students if s.average is not None])
+    count = len([s for s in students if s.average is not None])
+
+    average = total / count if count > 0 else 0
+
+    return jsonify({
+        "success": True,
+        "class_id": class_id,
+        "average": average
+    }), 200

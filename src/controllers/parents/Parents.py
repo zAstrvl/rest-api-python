@@ -1,5 +1,6 @@
 from flask import jsonify, request
 from src.models.parents.Parents import Parents
+from src.models.students.Students import Students
 from utils import role_required
 from src.constants.database import db
 from src.constants.usertypes import UserTypes
@@ -19,7 +20,7 @@ def post_parent_controller():
     existing_parent = Parents.query.filter_by(email=email).first()
     if existing_parent:
         return jsonify({"success": False, "status code": 409, "message": "Parent already exists"}), 409
-
+    
     new_parent = Parents(name=name, surName=surName, email=email, phone=phone, userType=userType)
     db.session.add(new_parent)
     db.session.commit()
@@ -31,12 +32,23 @@ def get_parents_controller():
     parents = Parents.query.all()
     parent_list = []
     for parent in parents:
+        itsChildren = Students.query.filter_by(parentID=parent.id).all()
+        children_list = [
+            {
+                "id": child.id,
+                "name": child.name,
+                "surName": child.surName,
+                "email": child.email
+            }
+            for child in itsChildren
+        ]
         parent_list.append({
             'id': parent.id,
             'name': parent.name,
             'surName': parent.surName,
             'email': parent.email,
             'phone': parent.phone,
+            'itsChildren': children_list
         })
     return jsonify({"success": True, "status code": 200, "message": "Parent list request successful", "data": {"parents": parent_list}}), 200
 
@@ -45,6 +57,18 @@ def get_parent_controller(parent_id):
     parent = Parents.query.get(parent_id)
     if not parent:
         return jsonify({"success": False, "status code": 404, "message": "Parent not found"}), 404
+    
+    itsChildren = Students.query.filter_by(parentID=parent_id).all()
+    children_list = [
+        {
+            "id": child.id,
+            "name": child.name,
+            "surName": child.surName,
+            "email": child.email
+        }
+        for child in itsChildren
+    ]
+
     return jsonify({
         "success": True,
         "status code": 200,
@@ -55,7 +79,8 @@ def get_parent_controller(parent_id):
             'surName': parent.surName,
             'email': parent.email,
             'phone': parent.phone,
-            'userType': parent.userType.name
+            'userType': parent.userType.name,
+            'itsChildren': children_list
             }
     }), 200
 
@@ -81,7 +106,7 @@ def put_parent_controller(parent_id):
     parent = Parents.query.get(parent_id)
     if not parent:
         return jsonify({"success": False, "status code": 404, "message": "Parent not found"}), 404
-
+    
     if not name or not surName or not email or not phone:
         return jsonify({"success": False, "status code": 400, "message": "All fields are required"}), 400
 

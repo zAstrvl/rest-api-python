@@ -1,5 +1,6 @@
 from flask import jsonify, request
 from src.models.teachers.Teachers import Teachers
+from src.models.classes.Classes import Classes
 from utils import role_required
 from src.constants.database import db
 from src.constants.usertypes import UserTypes
@@ -15,6 +16,7 @@ def post_teacher_controller():
     started_str = data.get('started')
     graduated_str = data.get('graduated')
     userType = UserTypes.TEACHER.name
+    itsClasses = data.get('itsClasses')
 
     started = datetime.strptime(started_str, "%d/%m/%Y").date() if started_str else None
     graduated = datetime.strptime(graduated_str, "%d/%m/%Y").date() if graduated_str else None
@@ -25,7 +27,7 @@ def post_teacher_controller():
     existing_teacher = Teachers.query.filter_by(email=email).first()
     if existing_teacher:
         return jsonify({"success": False, "status code": 409, "message": "Teacher already exists"}), 409
-
+    
     new_teacher = Teachers(name=name, surName=surName, email=email, occupation=occupation, started=started, graduated=graduated, userType=userType)
     db.session.add(new_teacher)
     db.session.commit()
@@ -37,6 +39,20 @@ def get_teachers_controller():
     teachers = Teachers.query.all()
     teacher_list = []
     for teacher in teachers:
+        classes = Classes.query.filter_by(itsTeacher=teacher.id)
+        class_list = [
+            {
+                "averageValue": c.averageValue,
+                "students": [
+                    {
+                "id": s.id,
+                "name": s.name,
+                "surName": s.surName,
+                "email": s.email
+                    } for s in c.students
+                ]
+            } for c in classes
+        ]
         teacher_list.append({
             'id': teacher.id,
             'name': teacher.name,
@@ -45,7 +61,8 @@ def get_teachers_controller():
             'occupation': teacher.occupation,
             'started': teacher.started,
             'graduated': teacher.graduated,
-            'userType': teacher.userType.name
+            'userType': teacher.userType.name,
+            "itsClasses": class_list
         })
     return jsonify({"success": True, "status code": 200, "message": "Teacher list request successful", "data": {"teachers": teacher_list}}), 200
 

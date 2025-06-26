@@ -1,5 +1,4 @@
 from src.constants.database import db
-from src.constants.usertypes import UserTypes
 
 class Classes(db.Model):
     __tablename__ = 'classes'
