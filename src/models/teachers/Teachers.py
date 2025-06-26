@@ -2,6 +2,7 @@ from src.constants.database import db
 from src.constants.usertypes import UserTypes
 
 class Teachers(db.Model):
+    __tablename__ = 'teachers'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(120), nullable=False)
     surName = db.Column(db.String(120), nullable=False)
@@ -13,6 +14,7 @@ class Teachers(db.Model):
     rate = db.Column(db.Float)
     userType = db.Column(db.Enum(UserTypes), nullable=False)
     average = db.Column(db.Float)
+    itsClasses = db.relationship('Classes', backref='teacher', lazy=True, cascade="all, delete-orphan")
 
     def __repr__(self):
         return f"<Teacher {self.email}>"
