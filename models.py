@@ -5,7 +5,8 @@ from src.models.parents.Parents import Parents
 from src.models.tests.Questions import Questions
 from src.models.tests.Answers import Answers
 from src.models.classes.Classes import Classes
+from src.models.tests.Tests import Tests
 from src.constants.database import db
 
 
-__all__ = ["db", "Auth", "Students", "Teachers", "Parents", "Questions", "Answers", "Classes"]
+__all__ = ["db", "Auth", "Students", "Teachers", "Parents", "Questions", "Answers", "Classes", "Tests"]

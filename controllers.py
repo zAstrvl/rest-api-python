@@ -4,6 +4,7 @@ from src.controllers.teachers import Teachers as TeachersController
 from src.controllers.parents import Parents as ParentsController
 from src.controllers.tests import Questions as QuestionsController
 from src.controllers.classes import Classes as ClassesController
+from src.controllers.tests import Tests as TestsController
 
 __all__ = [
     "AuthController",
@@ -11,5 +12,6 @@ __all__ = [
     "TeachersController",
     "ParentsController",
     "QuestionsController",
-    "ClassesController"
+    "ClassesController",
+    "TestsController"
 ]
